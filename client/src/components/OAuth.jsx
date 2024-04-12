@@ -2,17 +2,19 @@ import React, { useState } from 'react';
 import { GoogleAuthProvider, getAuth, signInWithPopup } from 'firebase/auth';
 import { app } from '../firebase';
 import toast, { Toaster } from 'react-hot-toast';
+import { useDispatch } from 'react-redux';
+import { signInSuccess } from '../redux/user/userSlice';
 import { useNavigate } from 'react-router-dom';
 
 export default function OAuth() {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const handleGoogleClick = async () => {
         try {
             const provider = new GoogleAuthProvider();
             const auth = getAuth(app);
-
             const result = await signInWithPopup(auth, provider);
             const res = await fetch('/api/auth/google', {
                 method: 'POST',
@@ -25,6 +27,7 @@ export default function OAuth() {
             const data = await res.json();
             if (res.status === 200) {
                 toast.success("Sign in success!")
+                dispatch(signInSuccess(data));
                 setTimeout(() => {
                     navigate("/");
                 }, 2500);

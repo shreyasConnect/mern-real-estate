@@ -9,6 +9,7 @@ export default function SignUp() {
   const [formData, setFormData] = useState({});
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
@@ -85,6 +86,7 @@ export default function SignUp() {
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
+      setLoading(true);
       const res = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: {
@@ -96,16 +98,19 @@ export default function SignUp() {
 
       const data = await res.json();
       if (res.status === 201) {
+        setLoading(false);
         toast.success(data);
         setTimeout(() => {
           navigate("/sign-in");
         }, 2500);
       }
       else if (res.status === 409) {
+        setLoading(false);
         toast.error(data)
       }
     }
     catch (error) {
+      setLoading(false);
       setError(error.message);
     }
 

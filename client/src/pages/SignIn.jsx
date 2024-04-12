@@ -2,14 +2,21 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import 'font-awesome/css/font-awesome.min.css';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  signInStart,
+  signInSuccess,
+  signInFailure,
+} from '../redux/user/userSlice';
 import OAuth from '../components/OAuth';
 
 
 export default function SignUp() {
   const [formData, setFormData] = useState({});
-  const [error, setError] = useState(null);
+  const { loading, error } = useSelector((state) => state.user);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -25,8 +32,9 @@ export default function SignUp() {
 
 
   const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      e.preventDefault();
+      dispatch(signInStart());
       const res = await fetch('/api/auth/signin', {
         method: 'POST',
         headers: {
@@ -37,19 +45,22 @@ export default function SignUp() {
       const data = await res.json();
       if (res.status === 200) {
         toast.success("Sign in success!");
+        dispatch(signInSuccess(data));
         setTimeout(() => {
           navigate("/");
         }, 2500);
       }
       else if (res.status === 401) {
         toast.error(data);
+        dispatch(signInFailure(data));
       }
       else if (res.status === 404) {
         toast.error(data);
+        dispatch(signInFailure(data));
       }
     }
     catch (error) {
-      setError(error.message);
+      dispatch(signInFailure(error.message));
     }
 
   }
