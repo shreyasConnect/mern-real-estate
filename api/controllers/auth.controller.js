@@ -49,7 +49,9 @@ export const signin = async (req, res) => {
         }
         const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
         const { password: pass, ...rest } = validUser._doc;
-        res.cookie('access_token', token, { httpOnly: true }).status(200).json(rest);
+        res.cookie('access_token', token, { httpOnly: true, secure: true, sameSite: 'Strict' })
+            .status(200)
+            .json(rest);
     }
     catch (error) {
         console.log(error);
@@ -63,7 +65,9 @@ export const google = async (req, res) => {
         if (user) {  //if user already exists, then registration
             const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
             const { password: pass, ...rest } = user._doc;
-            res.cookie('access_token', token, { httpOnly: true }).status(200).json(rest);
+            res.cookie('access_token', token, { httpOnly: true, secure: true, sameSite: 'Strict' })
+                .status(200)
+                .json(rest);
         }
         else { //the user is registering
             // Extract username from email by taking characters before '@'
@@ -100,7 +104,9 @@ export const google = async (req, res) => {
             await newUser.save();
             const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
             const { password, ...rest } = newUser._doc;
-            res.cookie('access_token', token, { httpOnly: true }).status(200).json(rest);
+            res.cookie('access_token', token, { httpOnly: true, secure: true, sameSite: 'Strict' })
+                .status(200)
+                .json(rest);
 
         }
     }
@@ -116,5 +122,14 @@ export const google = async (req, res) => {
         }
     }
 
+}
 
+export const signOut = async (req, res) => {
+    try {
+        res.clearCookie('access_token');
+        res.status(200).json("User has been logged out!");
+    }
+    catch (error) {
+        console.log("An error occured: ", error);
+    }
 }

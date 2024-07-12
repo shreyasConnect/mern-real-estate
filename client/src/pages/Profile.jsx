@@ -1,7 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useSelector } from 'react-redux';
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
+import { updateUserStart, updateUserSuccess, updateUserFailure, deleteUserFailure, deleteUserStart, deleteUserSuccess, signOutUserStart, signOutUserSuccess, signOutUserFailure, } from '../redux/user/userSlice.js';
 import { app } from '../firebase';
+import { useDispatch } from 'react-redux';
+import toast, { Toaster } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 export default function Profile() {
   const fileRef = useRef(null);
@@ -10,8 +14,8 @@ export default function Profile() {
   const [filePerc, setFilePerc] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
-  console.log(formData);
-  console.log(filePerc);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (file) {
@@ -42,10 +46,110 @@ export default function Profile() {
       }
     );
   };
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      dispatch(updateUserStart());
+      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (res.status === 200) {
+        toast.success("Details updated successfully!")
+        dispatch(updateUserSuccess(data));
+      }
+      else if (res.status === 409) {
+        toast.error(data)
+        dispatch(updateUserFailure(data.message));
+      }
+      else if (res.status === 408) {
+        toast.error(data);
+        dispatch(updateUserFailure(data.message));
+      }
+      else if (res.status === 401) {
+        toast.error(data)
+        dispatch(updateUserFailure(data.message));
+      }
+      else if (res.status === 403) {
+        toast.error(data);
+        dispatch(updateUserFailure(data.message));
+      }
+      else {
+        dispatch(updateUserFailure(data.message));
+        return;
+      }
+
+    }
+    catch (error) {
+      dispatch(updateUserFailure(error.message));
+
+    }
+  }
+
+  const handleDeleteuser = async () => {
+    try {
+      dispatch(deleteUserStart());
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if (res.status === 200) {
+        console.log("hii")
+        toast.success("User deleted successfully!")
+        dispatch(deleteUserSuccess(data));
+        navigate("/sign-in");
+      } else if (res.status === 401) {
+        toast.error(data)
+        dispatch(deleteUserFailure(data.message));
+      }
+      else if (res.status === 403) {
+        toast.error(data);
+        dispatch(deleteUserFailure(data.message));
+      }
+      else {
+        dispatch(deleteUserFailure(data.message));
+        return;
+      }
+    }
+    catch (error) {
+      dispatch(deleteUserFailure(error.message));
+      console.log("An error occured: ", error)
+    }
+  }
+
+  const handleSignOut = async () => {
+    try {
+      dispatch(signOutUserStart());
+      const res = await fetch('/api/auth/signout');
+      const data = await res.json();
+      if (res.status === 200) {
+        toast.success("Sign Out Successfully!")
+        dispatch(signOutUserSuccess(data));
+      }
+      else {
+        toast.error("Something went wrong!")
+        dispatch(signOutUserFailure(data.message));
+      }
+    }
+    catch (error) {
+      dispatch(signOutUserFailure(data.message));
+      console.log("An error occured: ", error);
+    }
+  }
   return (
     <div className='p-3 max-w-sm mx-auto'>
       <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
-      <form className='flex flex-col gap-4'>
+      <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
         <input onChange={(e) => setFile(e.target.files[0])} type='file' ref={fileRef} hidden accept='image/*' />
         <img onClick={() => fileRef.current.click()} src={formData.avatar || currentUser.avatar} alt="profile" className='rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2' />
         <p className='text-sm self-center'>
@@ -61,15 +165,16 @@ export default function Profile() {
             ''
           )}
         </p>
-        <input type='text' placeholder='Username' id='username' className='border p-3 rounded-lg' />
-        <input type='text' placeholder='Email' id='email' className='border p-3 rounded-lg' />
-        <input type='text' placeholder='Password' id='password' className='border p-3 rounded-lg' />
-        <button className='bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95' >Update</button>
-
+        <input type='text' placeholder='Username' id='username' className='border p-3 rounded-lg' defaultValue={currentUser.username} onChange={handleChange} />
+        <input type='text' placeholder='Name' id='name' className='border p-3 rounded-lg' defaultValue={currentUser.name} onChange={handleChange} />
+        <input type='text' placeholder='Email' id='email' className='border p-3 rounded-lg' defaultValue={currentUser.email} onChange={handleChange} />
+        <input type='password' placeholder='Password' id='password' className='border p-3 rounded-lg' onChange={handleChange} />
+        <button className='bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95' >UPDATE</button>
+        <Toaster />
       </form>
       <div className='flex justify-between mt-5'>
-        <span className=' text-red-700 cursor-pointer'>Delete Account</span>
-        <span className=' text-red-700 cursor-pointer'>Sign Out</span>
+        <span onClick={handleDeleteuser} className=' text-red-700 cursor-pointer'>Delete Account</span>
+        <span onClick={handleSignOut} className=' text-red-700 cursor-pointer'>Sign Out</span>
       </div>
     </div>
   )
