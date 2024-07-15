@@ -1,3 +1,4 @@
+import Listing from "../models/listing.model.js";
 import User from "../models/user.model.js"
 import bcryptjs from 'bcryptjs'
 
@@ -59,5 +60,20 @@ export const deleteUser = async (req, res) => {
     catch (error) {
         console.log("An error occured: ", error);
 
+    }
+}
+
+export const getUserListings = async (req, res) => {
+    if (req.user.id === req.params.id) {
+        try {
+            const listings = await Listing.find({ userRef: req.params.id });
+            res.status(200).json(listings);
+        }
+        catch (error) {
+            res.status(500).json("Internal Server Error")
+        }
+    }
+    else {
+        res.status(401).json("You can only view your own listings.")
     }
 }

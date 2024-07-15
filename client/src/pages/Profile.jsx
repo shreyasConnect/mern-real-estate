@@ -5,7 +5,7 @@ import { updateUserStart, updateUserSuccess, updateUserFailure, deleteUserFailur
 import { app } from '../firebase';
 import { useDispatch } from 'react-redux';
 import toast, { Toaster } from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Profile() {
   const fileRef = useRef(null);
@@ -170,6 +170,7 @@ export default function Profile() {
         <input type='text' placeholder='Email' id='email' className='border p-3 rounded-lg' defaultValue={currentUser.email} onChange={handleChange} />
         <input type='password' placeholder='Password' id='password' className='border p-3 rounded-lg' onChange={handleChange} />
         <button className='bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95' >UPDATE</button>
+        <Link className='bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95' to={"/create-listing"}>CREATE LISTING</Link>
         <Toaster />
       </form>
       <div className='flex justify-between mt-5'>
