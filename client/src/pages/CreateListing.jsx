@@ -10,20 +10,7 @@ export default function CreateListing() {
     const [files, setFiles] = useState([]);
     const { currentUser } = useSelector((state) => state.user);
     const navigate = useNavigate();
-    const [formData, setFormData] = UseData({
-        imageURLs: [],
-        name: '',
-        description: '',
-        address: '',
-        type: 'rent',
-        bedrooms: 1,
-        bathrooms: 1,
-        regularPrice: 0,
-        discountedPrice: 0,
-        offer: false,
-        parking: false,
-        furnished: false,
-    });
+    const { formData, setFormData } = UseData();
 
     const [imageUploadError, setImageUploadError] = useState(null);
     const [uploading, setUploading] = useState(false);
@@ -223,7 +210,7 @@ export default function CreateListing() {
                                 value={formData.regularPrice} />
                             <div className="flex flex-col items-center ">
                                 <p>Regular Price</p>
-                                {formData.type !== "sale" && <span className='text-xs'>($/month)</span>}
+                                {formData.type !== "sale" && <span className='text-xs'>(₹/month)</span>}
                             </div>
                         </div>
                         {formData.offer && (
@@ -233,7 +220,7 @@ export default function CreateListing() {
                                     value={formData.discountedPrice} />
                                 <div className="flex flex-col items-center ">
                                     <p>Discounted Price</p>
-                                    {formData.type !== "sale" && <span className='text-xs'>($/month)</span>}
+                                    {formData.type !== "sale" && <span className='text-xs'>(₹/month)</span>}
                                 </div>
                             </div>)}
                     </div>
@@ -245,7 +232,7 @@ export default function CreateListing() {
                     </p>
                     <div className="flex gap-4">
                         <input onChange={(e) => { setFiles(e.target.files) }} className='p-3 border-gray-300 rounded w-full' type="file" id="images" accept='image/*' multiple />
-                        <button type='button' onClick={handleImageSubmit} className='p-3 text-green-700 border border-green-700 rounded uppercase hover:shadow-lg disabled:opacity-80'>{uploading ? `Upload ${progress}%` : 'Upload'}</button>
+                        <button type='button' onClick={handleImageSubmit} className='p-3 text-green-700 border border-green-700 rounded uppercase hover:shadow-lg disabled:opacity-80'>{uploading ? `Upload ${progress.toFixed(2)}%` : 'Upload'}</button>
                     </div>
                     <p className='text-red-700 text-sm'>{imageUploadError && imageUploadError}</p>
                     {formData.imageURLs.length > 0 &&

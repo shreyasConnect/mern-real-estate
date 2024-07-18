@@ -13,7 +13,7 @@ import OAuth from '../components/OAuth';
 
 export default function SignUp() {
   const [formData, setFormData] = useState({});
-  const { loading, error } = useSelector((state) => state.user);
+  const { loading } = useSelector((state) => state.user);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -95,7 +95,6 @@ export default function SignUp() {
         <p>Don't have an account? </p>
         <Link to='/sign-up' className='text-blue-700 hover:underline'>Sign Up</Link>
       </div>
-      {error && <p className='text-red-500 mt-5'>{error}</p>}
     </div >
   )
 }
