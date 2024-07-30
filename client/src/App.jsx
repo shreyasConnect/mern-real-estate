@@ -25,8 +25,7 @@ export default function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/create-listing" element={<CreateListing />} />
           <Route path="/view-listings" element={<ViewListings />} />
-          <Route path="/pricing" element={<PricingPlan />} />
-          
+          <Route path="/pricing" element={<PricingPlan />} /> 
         </Route>
       </Routes>
     </BrowserRouter>

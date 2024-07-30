@@ -6,15 +6,16 @@ import { app } from '../firebase';
 import { useDispatch } from 'react-redux';
 import toast, { Toaster } from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
+import { Context, UseData } from '../NewContext.jsx';
 
 export default function Profile() {
   const fileRef = useRef(null);
-  const [premiumMember, setPremiumMember] = useState(false);
+  const { premiumMember } = UseData(Context);
   const { currentUser } = useSelector((state) => state.user)
   const [file, setFile] = useState(undefined);
   const [filePerc, setFilePerc] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
-  const [formData, setFormData] = useState({});
+  const { formData, setFormData } = UseData(Context);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -22,7 +23,6 @@ export default function Profile() {
     if (file) {
       handleFileUpload(file);
     }
-    handlePremium();
   }, [file]);
 
   const handleFileUpload = (file) => {
@@ -49,24 +49,7 @@ export default function Profile() {
     );
   };
 
-  const handlePremium = async () => {
-    try {
-      console.log("prem hit")
-      const res = await fetch(`/api/payment/premium/${currentUser._id}`, {
-      });
-      const data = await res.json();
-      console.log("object")
-      if (res.status === 200) {
-        setPremiumMember(true);
-      }
-      else if (res.status == 500) {
-        console.log(data)
-      }
-    }
-    catch (error) {
-      console.log(error)
-    }
-  }
+  
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
