@@ -9,6 +9,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 export default function Profile() {
   const fileRef = useRef(null);
+  const [premiumMember, setPremiumMember] = useState(false);
   const { currentUser } = useSelector((state) => state.user)
   const [file, setFile] = useState(undefined);
   const [filePerc, setFilePerc] = useState(0);
@@ -21,6 +22,7 @@ export default function Profile() {
     if (file) {
       handleFileUpload(file);
     }
+    handlePremium();
   }, [file]);
 
   const handleFileUpload = (file) => {
@@ -46,6 +48,25 @@ export default function Profile() {
       }
     );
   };
+
+  const handlePremium = async () => {
+    try {
+      console.log("prem hit")
+      const res = await fetch(`/api/payment/premium/${currentUser._id}`, {
+      });
+      const data = await res.json();
+      console.log("object")
+      if (res.status === 200) {
+        setPremiumMember(true);
+      }
+      else if (res.status == 500) {
+        console.log(data)
+      }
+    }
+    catch (error) {
+      console.log(error)
+    }
+  }
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -146,12 +167,18 @@ export default function Profile() {
       console.log("An error occured: ", error);
     }
   }
+  const premiumStyle = {
+    boxShadow: premiumMember ? '0 0 10px 5px green' : 'none',
+
+
+  }
   return (
     <div className='p-3 max-w-sm mx-auto'>
+
       <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
       <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
         <input onChange={(e) => setFile(e.target.files[0])} type='file' ref={fileRef} hidden accept='image/*' />
-        <img onClick={() => fileRef.current.click()} src={formData.avatar || currentUser.avatar} alt="profile" className='rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2' />
+        <img onClick={() => fileRef.current.click()} src={formData.avatar || currentUser.avatar} alt="profile" className='rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2' style={premiumStyle} />
         <p className='text-sm self-center'>
           {fileUploadError ? (
             <span className='text-red-700'>

@@ -27,6 +27,8 @@ export const paymentVerification = async (req, res) => {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
         req.body;
 
+    const user_id = req.user.id;
+
     const body = razorpay_order_id + "|" + razorpay_payment_id;
 
     const expectedSignature = crypto
@@ -35,21 +37,61 @@ export const paymentVerification = async (req, res) => {
         .digest("hex");
 
     const isAuthentic = expectedSignature === razorpay_signature;
+    const subscriptionDurations = {
+        399: 30,
+        2094: 180,
+        3588: 365
+    };
+    const durationInDays = subscriptionDurations[req.params.amount];
+
+    const startDate = new Date();
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + durationInDays);
+
 
     if (isAuthentic) {
 
         await Payment.create({
+            user_id,
             razorpay_order_id,
             razorpay_payment_id,
             razorpay_signature,
+            subscription_start_date: startDate,
+            subscription_end_date: endDate
         });
 
-        res.redirect(
-            `http://localhost:3000/paymentsuccess?reference=${razorpay_payment_id}`
-        );
+        res.status(200).json("Payment Successful!")
+
     } else {
-        res.status(400).json({
-            success: false,
-        });
+        res.status(400).json("Payment Unsuccessfull!");
     }
 };
+
+export const premiumStatus = async (req, res) => {
+    const userId = req.params.id;
+
+    try {
+        const user = await Payment.findOne({ user_id: userId });;
+
+
+        if (!user) {
+            return res.status(404);
+        }
+        console.log("hit")
+        const startDate = user.subscription_start_date;
+        const endDate = user.subscription_end_date;
+
+        const currentDate = new Date();
+        const isPremium = currentDate >= startDate && currentDate <= endDate;
+
+        console.log(isPremium)
+
+
+        if (isPremium) {
+            res.status(200).json("Success");
+        }
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+        res.status(500).json('Internal Server Error');
+    }
+}

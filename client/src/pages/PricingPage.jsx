@@ -1,21 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const PricingPlan = () => {
     const [selectedPlan, setSelectedPlan] = useState('Monthly');
+    const { currentUser } = useSelector((state) => state.user)
     const [amount, setAmount] = useState(349);
+    const navigate = useNavigate();
 
     const handlePlanChange = (plan, price) => {
         setSelectedPlan(plan);
         setAmount(price);
+        console.log(plan, price)
     };
 
-    const checkoutHandler = async (plan, amount) => {
+    const checkoutHandler = async (plan, amount, e) => {
         setAmount(amount);
         const key = await fetch("/api/payment/getkey");
         const dataKey = await key.json();
         console.log("Key:", dataKey)
 
-        const order = await fetch(`/api/payment/checkout/${amount}`, {
+        const order = await fetch(`/api/payment/checkout/${amount}/${currentUser._id}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -30,9 +36,38 @@ const PricingPlan = () => {
             currency: "INR",
             name: "Patil Developers",
             description: `Plan: ${plan}`,
-            image: "../assets/patil-logo.png",
+            image: "https://github.com/shreyasConnect/mern-real-estate/blob/main/client/src/assets/patil-logo.png",
             order_id: orderData.id,
-            callback_url: "/api/paymentverification",
+            handler: async (response) => {
+                console.log("response", response)
+                try {
+                    const res = await fetch(`/api/payment/paymentverification/${amount}`, {
+                        method: 'POST',
+                        headers: {
+                            'content-type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature,
+                        })
+                    })
+
+                    const verifyData = await res.json();
+                    if (res.status === 200) {
+                        toast.success(verifyData);
+                        setTimeout(() => {
+                            navigate('/profile');
+                        }, 2500);
+                    }
+                    else {
+                        toast.error(verifyData);
+                    }
+                }
+                catch (error) {
+                    console.log("An error occured:", error);
+                }
+            },
             prefill: {
                 name: "Shreyas Patil",
                 email: "patilshreyas1803@gmail.com",
@@ -46,7 +81,17 @@ const PricingPlan = () => {
             }
         };
         const razor = new window.Razorpay(options);
+        razor.on("payment.failed", function (response) {
+            alert(response.error.code);
+            alert(response.error.description);
+            alert(response.error.source);
+            alert(response.error.step);
+            alert(response.error.reason);
+            alert(response.error.metadata.order_id);
+            alert(response.error.metadata.payment_id);
+        });
         razor.open();
+
     }
 
 
@@ -61,7 +106,7 @@ const PricingPlan = () => {
             <div className="mt-8 space-y-4">
                 <div
                     className={`p-4 border rounded-lg cursor-pointer ${selectedPlan === 'Monthly' ? 'border-blue-500' : 'border-gray-300'}`}
-
+                    onClick={() => setSelectedPlan('Monthly')}
                 >
                     <input type="radio" id="Monthly" name="plan" value="Monthly" className="hidden" checked={selectedPlan === 'Monthly' && amount === 399} readOnly onClick={() => handlePlanChange('Monthly', 399)} />
                     <label htmlFor="Monthly" className="flex items-center cursor-pointer">
@@ -78,7 +123,7 @@ const PricingPlan = () => {
                 </div>
                 <div
                     className={`p-4 border rounded-lg cursor-pointer ${selectedPlan === 'SemiAnnually' ? 'border-blue-500' : 'border-gray-300'}`}
-
+                    onClick={() => setSelectedPlan('SemiAnnually')}
                 >
                     <input type="radio" id="SemiAnnually" name="plan" value="SemiAnnually" className="hidden" checked={selectedPlan === 'SemiAnnually' && amount === 2094} readOnly onClick={() => handlePlanChange('SemiAnually', 2094)} />
                     <label htmlFor="SemiAnnually" className="flex items-center cursor-pointer">
@@ -89,7 +134,7 @@ const PricingPlan = () => {
                         </div>
                         <div>
                             <p className="text-lg font-semibold">₹349/month</p>
-                            <p className="text-gray-500">2094 billed in a half year</p>
+                            <p className="text-gray-500">₹2094 billed in a half year</p>
                         </div>
                         <div className="ml-auto bg-green-100 text-green-700 text-sm font-semibold px-2 py-1 rounded-full">Save 12%</div>
                     </label>
@@ -113,6 +158,7 @@ const PricingPlan = () => {
                         <div className="ml-auto bg-green-100 text-green-700 text-sm font-semibold px-2 py-1 rounded-full">Save 25%</div>
                     </label>
                 </div>
+                <Toaster />
             </div>
 
             <button onClick={() => checkoutHandler(selectedPlan, amount)} className="mt-8 bg-gradient-to-r from-purple-500 to-blue-500 text-white py-3 px-8 rounded-full font-semibold">

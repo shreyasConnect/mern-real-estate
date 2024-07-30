@@ -12,10 +12,15 @@ export default function SignUp() {
   const [loading, setLoading] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
   };
 
   const renderTick = (condition) => {
@@ -152,9 +157,9 @@ export default function SignUp() {
 
         }
         <div style={{ position: 'relative' }}>
-          <input type={showPassword ? 'text' : 'password'} placeholder='Confirm Password' className='border p-3 rounded-lg w-full' id='cpassword' onChange={handleConfirmPasswordChange} required />
+          <input type={showConfirmPassword ? 'text' : 'password'} placeholder='Confirm Password' className='border p-3 rounded-lg w-full' id='cpassword' onChange={handleConfirmPasswordChange} required />
           <span
-            onClick={togglePasswordVisibility}
+            onClick={toggleConfirmPasswordVisibility}
             style={{
               position: 'absolute',
               right: '12px',
@@ -163,7 +168,7 @@ export default function SignUp() {
               cursor: 'pointer',
             }}
           >
-            {showPassword ? <i className=" fa fa-solid fa-eye" /> : <i className=" fa fa-solid fa-eye-slash" />}
+            {showConfirmPassword ? <i className=" fa fa-solid fa-eye" /> : <i className=" fa fa-solid fa-eye-slash" />}
           </span>
         </div>
 
