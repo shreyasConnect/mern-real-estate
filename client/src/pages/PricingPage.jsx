@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 const PricingPlan = () => {
     const [selectedPlan, setSelectedPlan] = useState('Monthly');
     const { currentUser } = useSelector((state) => state.user)
-    const [amount, setAmount] = useState(349);
+    const [amount, setAmount] = useState(399);
     const navigate = useNavigate();
 
     const handlePlanChange = (plan, price) => {

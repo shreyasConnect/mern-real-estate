@@ -21,6 +21,10 @@ export const ContextProvider = ({ children }) => {
     });
     const [premiumMember, setPremiumMember] = useState(false);
     const handlePremium = async () => {
+        if (!currentUser || !currentUser._id) {
+            console.log("User not logged in or ID missing");
+            return;
+        }
         try {
             console.log("prem hit")
             const res = await fetch(`/api/payment/premium/${currentUser._id}`, {
@@ -42,7 +46,7 @@ export const ContextProvider = ({ children }) => {
     useEffect(() => {
 
         handlePremium();
-    }, []);
+    }, [currentUser]);
 
     return (
         <Context.Provider value={{
