@@ -77,14 +77,12 @@ export const premiumStatus = async (req, res) => {
         if (!user) {
             return res.status(404);
         }
-        console.log("hit")
         const startDate = user.subscription_start_date;
         const endDate = user.subscription_end_date;
 
         const currentDate = new Date();
         const isPremium = currentDate >= startDate && currentDate <= endDate;
 
-        console.log(isPremium)
 
 
         if (isPremium) {

@@ -2,26 +2,13 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import toast, { Toaster } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
+import { MdLocationOn } from 'react-icons/md';
 
 
 export function ViewListings() {
+
     const { currentUser } = useSelector((state) => state.user);
-    const [userListings, setUserListings] = useState([
-        //     {
-        //     imageURLs: [],
-        //     name: '',
-        //     description: '',
-        //     address: '',
-        //     type: 'rent',
-        //     bedrooms: 1,
-        //     bathrooms: 1,
-        //     regularPrice: 0,
-        //     discountedPrice: 0,
-        //     offer: false,
-        //     parking: false,
-        //     furnished: false,
-        // }
-    ]);
+    const [userListings, setUserListings] = useState([]);
 
     useEffect(() => {
         const handleShowListings = async () => {
@@ -67,25 +54,26 @@ export function ViewListings() {
 
     return (
         <>
+            {/* <Toaster /> */}
             <h1 className='text-center m-7 text-2xl font-semibold'>
                 Your Listings
             </h1>
             {
-                userListings && userListings.length > 0 && (
+                userListings && Array.isArray(userListings) && userListings.length > 0 && (
 
 
                     <div className='grid grid-cols-1 md:grid-cols-2 gap-5'>
                         {userListings.map((listing) => (
                             <div key={listing._id} className="flex gap-5 p-5 bg-white shadow-md rounded-md  hover:bg-amber-100 hover:shadow-xl transition-shadow">
-                                <Link to={`/${listing._id}`} className="flex-2 h-48 hidden md:block">
+                                <Link to={`/listing/${listing._id}`} className="flex-2 h-48 hidden md:block">
                                     <img className="w-full h-full object-cover rounded-md" src={listing.imageURLs[0]} alt={listing.name} />
                                 </Link>
                                 <div className="flex-3 flex flex-col justify-between gap-2">
                                     <h2 className="text-xl font-semibold text-gray-700 transition-all duration-400 hover:text-black hover:scale-105">
-                                        <Link to={`/${listing.id}`}>{listing.name}</Link>
+                                        <Link to={`/listing/${listing._id}`}>{listing.name}</Link>
                                     </h2>
                                     <p className="text-sm flex items-center gap-1 text-gray-500">
-                                        <img className="w-4 h-4" src="/pin.png" alt="Address" />
+                                        <MdLocationOn className='h-4 w-4 text-green-700' />
                                         <span>{listing.address}</span>
                                     </p>
                                     <p className="text-xl font-light px-2 py-1 rounded bg-yellow-200 w-max">
@@ -142,7 +130,7 @@ export function ViewListings() {
 
                         ))
                         }
-                        <Toaster />
+                        {/* <Toaster /> */}
                     </div >
                 )
             }

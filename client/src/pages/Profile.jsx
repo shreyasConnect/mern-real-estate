@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useContext } from 'react'
 import { useSelector } from 'react-redux';
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 import { updateUserStart, updateUserSuccess, updateUserFailure, deleteUserFailure, deleteUserStart, deleteUserSuccess, signOutUserStart, signOutUserSuccess, signOutUserFailure, } from '../redux/user/userSlice.js';
@@ -6,16 +6,16 @@ import { app } from '../firebase';
 import { useDispatch } from 'react-redux';
 import toast, { Toaster } from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
-import { Context, UseData } from '../NewContext.jsx';
+import { Context } from '../NewContext.jsx';
 
 export default function Profile() {
   const fileRef = useRef(null);
-  const { premiumMember } = UseData(Context);
+  const { premiumMember } = useContext(Context);
   const { currentUser } = useSelector((state) => state.user)
   const [file, setFile] = useState(undefined);
   const [filePerc, setFilePerc] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
-  const { formData, setFormData } = UseData(Context);
+  const [formData, setFormData] = useState({});
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -24,6 +24,7 @@ export default function Profile() {
       handleFileUpload(file);
     }
   }, [file]);
+
 
   const handleFileUpload = (file) => {
     const storage = getStorage(app);
@@ -49,7 +50,7 @@ export default function Profile() {
     );
   };
 
-  
+
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -75,18 +76,22 @@ export default function Profile() {
       else if (res.status === 409) {
         toast.error(data)
         dispatch(updateUserFailure(data.message));
+        return;
       }
       else if (res.status === 408) {
         toast.error(data);
         dispatch(updateUserFailure(data.message));
+        return;
       }
       else if (res.status === 401) {
         toast.error(data)
         dispatch(updateUserFailure(data.message));
+        return;
       }
       else if (res.status === 403) {
         toast.error(data);
         dispatch(updateUserFailure(data.message));
+        return;
       }
       else {
         dispatch(updateUserFailure(data.message));
@@ -139,6 +144,9 @@ export default function Profile() {
       if (res.status === 200) {
         toast.success("Sign Out Successfully!")
         dispatch(signOutUserSuccess(data));
+        setTimeout(() => {
+          navigate("/sign-in");
+        }, 1000);
       }
       else {
         toast.error("Something went wrong!")
@@ -159,7 +167,7 @@ export default function Profile() {
     <div className='p-3 max-w-sm mx-auto'>
 
       <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
-      <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className='flex flex-col gap-4' >
         <input onChange={(e) => setFile(e.target.files[0])} type='file' ref={fileRef} hidden accept='image/*' />
         <img onClick={() => fileRef.current.click()} src={formData.avatar || currentUser.avatar} alt="profile" className='rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2' style={premiumStyle} />
         <p className='text-sm self-center'>
@@ -181,7 +189,7 @@ export default function Profile() {
         <input type='password' placeholder='Password' id='password' className='border p-3 rounded-lg' onChange={handleChange} />
         <button className='bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95' >UPDATE</button>
         <Link className='bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95' to={"/create-listing"}>CREATE LISTING</Link>
-        <Toaster />
+        {/* <Toaster /> */}
       </form>
       <div className='flex justify-between mt-5'>
         <span onClick={handleDeleteuser} className=' text-red-700 cursor-pointer'>Delete Account</span>
@@ -190,3 +198,6 @@ export default function Profile() {
     </div>
   )
 }
+
+
+
