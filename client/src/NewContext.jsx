@@ -51,7 +51,7 @@
 //     const [socket, setSocket] = useState(null);
 
 //     useEffect(() => {
-//         setSocket(io("http://localhost:4000"));
+//         setSocket(io("localhost:4000"));
 //     }, []);
 
 //     useEffect(() => {
@@ -131,22 +131,35 @@ export const ContextProvider = ({ children }) => {
         }
     };
 
-    
+
 
     // Socket state
     const [socket, setSocket] = useState(null);
+    const [onlineUser, setOnlineUser] = useState([]);
 
     useEffect(() => {
         handlePremium();
     }, [currentUser]);
 
-    // useEffect(() => {
-    //     setSocket(io("http://localhost:4000"));
-    // }, []);
-
     useEffect(() => {
-        currentUser && socket?.emit("newUser", currentUser.id);
-    }, [currentUser, socket]);
+        if (currentUser) {
+            const socket = io("http://localhost:3000", {
+                query: {
+                    userId: currentUser?._id,
+                }
+            })
+            socket.on("getOnlineUsers", (users) => {
+                setOnlineUser(users)
+            });
+            setSocket(socket);
+            return () => socket.close();
+        } else {
+            if (socket) {
+                socket.close();
+                setSocket(null);
+            }
+        }
+    }, [currentUser]);
 
     return (
         <Context.Provider
@@ -160,9 +173,9 @@ export const ContextProvider = ({ children }) => {
                 premiumMember,
                 setPremiumMember,
                 handlePremium,
-                
+
                 // Socket state
-                socket,
+                socket, onlineUser
             }}
         >
             {children}

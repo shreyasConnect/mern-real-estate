@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import Slider from "react-slick";
 import { useSelector } from 'react-redux';
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 import {
     FaBath,
     FaBed,
@@ -12,8 +9,8 @@ import {
     FaParking,
     FaShare,
 } from 'react-icons/fa';
-import Contact from '../components/Contact';
 import CustomCarousel from '../components/Slider';
+// import Chat from './Chat';
 
 // https://sabe.io/blog/javascript-format-numbers-commas#:~:text=The%20best%20way%20to%20format,format%20the%20number%20with%20commas.
 
@@ -33,6 +30,7 @@ export default function Listing() {
         slidesToScroll: 1,
         arrows: true,
     };
+
 
     useEffect(() => {
         const fetchListing = async () => {
@@ -57,7 +55,7 @@ export default function Listing() {
         fetchListing();
     }, [params.listingId]);
 
-    console.log(listing);
+
 
     return (
         <main>
@@ -140,15 +138,15 @@ export default function Listing() {
                                 {listing.furnished ? 'Furnished' : 'Unfurnished'}
                             </li>
                         </ul>
-                        {currentUser && listing.userRef !== currentUser._id && !contact && (
+                        {currentUser && listing.userRef !== currentUser._id(
                             <button
+                                className='bg-green-700 text-white p-2 rounded-md'
                                 onClick={() => setContact(true)}
-                                className='bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 p-3'
                             >
-                                Contact landlord
+                                Contact
                             </button>
                         )}
-                        {contact && <Contact listing={listing} />}
+
                     </div>
                 </div>
             )

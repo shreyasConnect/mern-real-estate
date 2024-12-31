@@ -6,6 +6,7 @@ import { Context } from '../NewContext';
 
 export default function Header() {
     const { currentUser } = useSelector(state => state.user);
+    console.log(currentUser);
     const { premiumMember } = useContext(Context);
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
@@ -44,7 +45,7 @@ export default function Header() {
                     <Link to='/'><li className='hidden sm:inline text-slate-700 hover:underline'>Home</li></Link>
                     <Link to='/about'> <li className='hidden sm:inline text-slate-700 hover:underline'>About</li></Link>
                     <Link to='/view-listings'> <li className='hidden sm:inline text-slate-700 hover:underline'>Listings</li></Link>
-                    {premiumMember && (
+                    {currentUser && premiumMember && (
                         <Link to='/chat'>
                             <li className='hidden sm:inline text-slate-700 hover:underline'>Messages</li>
                         </Link>
