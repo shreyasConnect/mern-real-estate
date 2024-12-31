@@ -25,7 +25,6 @@ export default function Chat() {
         backdrop-filter backdrop-blur-lg 
         bg-opacity-0'
         >
-            <h1>Hello</h1>
             <div className={`w-full py-2 md:flex ${isSidebarVisible ? '' : 'hidden'}`}>
                 <Sidebar onSelectUser={handelUserSelect} />
             </div>

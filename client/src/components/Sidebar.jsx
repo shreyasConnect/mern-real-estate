@@ -116,15 +116,20 @@ const Sidebar = ({ onSelectUser }) => {
         <div className='h-full w-auto px-1'>
             <div className='flex justify-between gap-2'>
                 <form onSubmit={handelSearchSubmit} className='w-auto flex items-center justify-between bg-white rounded-full '>
-                    <input
+                    {/* <input
                         value={searchInput}
                         onChange={(e) => setSearchInput(e.target.value)}
                         type='text'
                         className='px-4 w-auto bg-transparent outline-none rounded-full'
                         placeholder='search user'
                     />
-                    <button className='btn btn-circle bg-sky-700 hover:bg-gray-950'>
+                    <button className='btn btn-circle bg-amber-800 hover:bg-gray-700'>
                         <FaSearch />
+                    </button> */}
+                    <input type='text' placeholder='Search...' className='bg-transparent focus:outline-none w-24 sm:w-64' value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)} />
+                    <button>
+                        <FaSearch className='text-slate-600' />
                     </button>
                 </form>
                 <img
