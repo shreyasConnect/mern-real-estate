@@ -9,7 +9,7 @@ export default function Chat() {
 
     const handelUserSelect = (user) => {
         setSelectedUser(user);
-        setIsSidebarVisible(false);
+        setIsSidebarVisible(true);
     }
     const handelShowSidebar = () => {
         setIsSidebarVisible(true);
@@ -17,22 +17,24 @@ export default function Chat() {
     }
     return (
 
-        <div className='flex justify-between min-w-full
-     md:min-w-[550px] md:max-w-[65%]
-      px-2 h-[95%] md:h-full  
-      rounded-xl shadow-lg
-       bg-gray-400 bg-clip-padding
-        backdrop-filter backdrop-blur-lg 
-        bg-opacity-0'
-        >
-            <div className={`w-full py-2 md:flex ${isSidebarVisible ? '' : 'hidden'}`}>
+        <div className="flex h-[89.7vh]">
+            {/* Sidebar (30% width) */}
+            <div
+                className={`${isSidebarVisible ? 'w-[30%] mx-0.5' : ''
+                    }  `}
+            >
                 <Sidebar onSelectUser={handelUserSelect} />
             </div>
-            <div className={`divider divider-horizontal px-3 md:flex
-         ${isSidebarVisible ? '' : 'hidden'} ${selectedUser ? 'block' : 'hidden'}`}></div>
-            <div className={`flex-auto ${selectedUser ? '' : 'hidden md:flex'} bg-gray-200}`}>
+            <div
+                className={`${selectedUser ? 'w-[70%] mx-0.5' : 'w-[70%] mx-0.5'
+                    }  `}
+            >
                 <MessageContainer onBackUser={handelShowSidebar} />
             </div>
+            {/* <div className={` ${selectedUser ? 'w-[70%] mx-' : 'hidden'}`}></div>
+            <div className={`flex-auto ${selectedUser ? 'w-[70%]' : ''}  }`}>
+                <MessageContainer onBackUser={handelShowSidebar} />
+            </div> */}
         </div>
     );
 };

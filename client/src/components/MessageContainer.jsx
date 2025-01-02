@@ -82,27 +82,27 @@ const MessageContainer = ({ onBackUser }) => {
     }
 
     return (
-        <div className='md:min-w-[500px] h-[99%] flex flex-col py-2'>
+        <div className='m-0.5 border border-black rounded-lg flex flex-col p-1 w-full h-full'>
             {selectedConversation === null ? (
                 <div className='flex items-center justify-center w-full h-full'>
-                    <div className='px-4 text-center text-2xl text-gray-950 font-semibold 
-            flex flex-col items-center gap-2'>
-                        <p className='text-2xl'>Welcome!!👋 {currentUser.username}😉</p>
-                        <p className="text-lg">Select a chat to start messaging</p>
+                    <div className='px-4 text-center text-2xl text-gray-950 font-semibold flex flex-col items-center gap-2 w-full max-w-lg'>
+                        <p className="text-2xl font-semibold text-black-800">Welcome, {currentUser.name}! 👋</p>
+                        <p className="text-lg text-black-600 mt-1">Choose a chat to start connecting with property owners.</p>
+
                         <TiMessages className='text-6xl text-center' />
                     </div>
                 </div>
             ) : (
                 <>
-                    <div className='flex justify-between gap-1 bg-sky-600 md:px-2 rounded-lg h-10 md:h-12'>
+                    <div className='flex flex-col md:px-2 gap-1 bg-slate-200  rounded-lg h-10 md:h-12'>
                         <div className='flex gap-2 md:justify-between items-center w-full'>
-                            <div className='md:hidden ml-1 self-center'>
+                            {/* <div className='md:hidden ml-1 self-center '>
                                 <button onClick={() => onBackUser(true)} className='bg-white rounded-full px-2 py-1
                    self-center'>
                                     <IoArrowBackSharp size={25} />
                                 </button>
-                            </div>
-                            <div className='flex justify-between mr-2 gap-2'>
+                            </div> */}
+                            <div className='flex justify-between m-1 gap-2 '>
                                 <div className='self-center'>
                                     <img className='rounded-full w-6 h-6 md:w-10 md:h-10 cursor-pointer' src={selectedConversation?.avatar} />
                                 </div>
@@ -112,8 +112,8 @@ const MessageContainer = ({ onBackUser }) => {
                             </div>
                         </div>
                     </div>
-
-                    <div className='flex-1 overflow-auto'>
+                    {/* ------------------------------------------------------------------- */}
+                    <div className='my-1 flex-1 overflow-auto '>
                         {loading && (
                             <div className="flex w-full h-full flex-col items-center justify-center 
                 gap-4 bg-transparent">
@@ -121,32 +121,38 @@ const MessageContainer = ({ onBackUser }) => {
                             </div>
                         )}
                         {!loading && messages?.length === 0 && (
-                            <p className='text-center text-white items-center'>Send a message to
-                                start Conversation</p>
+                            <h1 className="flex flex-col items-center text-center text-black  text-xl font-medium py-4 rounded-lg ">
+                                Send a message to start a conversation
+                            </h1>
+
                         )}
                         {!loading && messages?.length > 0 && messages?.map((message) => (
-                            <div className='text-white' key={message?._id} ref={lastMessageRef}>
-                                <div className={`chat ${message.senderId === currentUser._id ? 'chat-end' : 'chat-start'}`}>
-                                    <div className='chat-image avatar'></div>
-                                    <div className={`chat-bubble ${message.senderId === currentUser._id ? 'bg-sky-600' : ''
-
-                                        }`}>
+                            <div
+                                className={`text-white my-2 flex ${message.senderId === currentUser._id ? 'justify-end' : 'justify-start'}`}
+                                key={message?._id}
+                                ref={lastMessageRef}
+                            >
+                                <div className={`chat-bubble p-3 rounded-lg max-w-[80%] ${message.senderId === currentUser._id ? 'bg-green-200 text-start' : 'bg-gray-200 text-start'}`}>
+                                    <div className="message-text text-black">
                                         {message?.message}
                                     </div>
-                                    <div className="chat-footer text-[10px] opacity-80">
-                                        {new Date(message?.createdAt).toLocaleDateString('en-IN')}
+                                    <div className="text-end message-timestamp text-sm text-gray-600 mt-0.5">
+                                        {new Date(message?.createdAt).toLocaleDateString('en-IN')} {' '}
                                         {new Date(message?.createdAt).toLocaleTimeString('en-IN', {
-                                            hour: 'numeric', minute:
-                                                'numeric'
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+
                                         })}
                                     </div>
                                 </div>
                             </div>
                         ))}
+
+
                     </div>
                     <form onSubmit={handelSubmit} className='rounded-full text-black'>
                         <div className='w-full rounded-full flex items-center bg-white'>
-                            <input value={sendData} onChange={handelMessages} required id='message' type='text'
+                            <input value={sendData} onChange={handelMessages} required id='message' type='text' placeholder='Message'
                                 className='w-full bg-transparent outline-none px-4 rounded-full' />
                             <button type='submit'>
                                 {sending ? <div className='loading loading-spinner'></div> :

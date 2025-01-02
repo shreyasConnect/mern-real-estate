@@ -113,10 +113,12 @@ const Sidebar = ({ onSelectUser }) => {
 
 
     return (
-        <div className='h-full w-auto px-1'>
-            <div className='flex justify-between gap-2'>
-                <form onSubmit={handelSearchSubmit} className='w-auto flex items-center justify-between bg-white rounded-full '>
-                    {/* <input
+        <div className="m-0.5 border border-black rounded-lg flex flex-col p-1 w-full h-full ">
+            <p className='m-2.5 font-bold '>My Chats</p>
+            <div className="flex flex-col  h-auto w-auto rounded-xl overflow-hidden p-1">
+                <div className=' w-auto h-auto p-2 flex items-center justify-between'>
+                    <form onSubmit={handelSearchSubmit} className='relative flex items-center w-full bg-red-500 rounded-full'>
+                        {/* <input
                         value={searchInput}
                         onChange={(e) => setSearchInput(e.target.value)}
                         type='text'
@@ -126,35 +128,41 @@ const Sidebar = ({ onSelectUser }) => {
                     <button className='btn btn-circle bg-amber-800 hover:bg-gray-700'>
                         <FaSearch />
                     </button> */}
-                    <input type='text' placeholder='Search...' className='bg-transparent focus:outline-none w-24 sm:w-64' value={searchInput}
-                        onChange={(e) => setSearchInput(e.target.value)} />
-                    <button>
-                        <FaSearch className='text-slate-600' />
-                    </button>
-                </form>
-                <img
-                    onClick={() => navigate('/profile')}
-                    src={currentUser.avatar}
-                    className='self-center h-12 w-12 hover:scale-110 cursor-pointer' />
+                        <input
+                            type="text"
+                            placeholder="Search..."
+                            className="border border-black bg-slate-300 w-64 sm:w-96 h-12 px-4 rounded-l-md focus:outline-none text-black-950 text-lg"
+                            value={searchInput}
+                            onChange={(e) => setSearchInput(e.target.value)}
+                        />
+                        <button
+                            className=" border border-black absolute right-0 top-1/2 transform -translate-y-1/2 h-full px-4 bg-amber-300 hover:bg-amber-400 rounded-r-md flex items-center justify-center"
+                        >
+                            <FaSearch className="text-slate-600" />
+                        </button>
+
+                    </form>
+                </div>
             </div>
             <div className='divider px-3'></div>
             {searchUser?.length > 0 ? (
                 <>
-                    <div className="min-h-[70%] max-h-[80%] m overflow-y-auto scrollbar ">
-                        <div className='w-auto'>
+                    <div className="min-h-[70%] max-h-[80%] m overflow-y-auto scrollbar  ">
+                        <div className='w-auto   '>
                             {searchUser.map((user, index) => (
                                 <div key={user._id}>
                                     <div
                                         onClick={() => handelUserClick(user)}
-                                        className={`flex gap-3 
-                                                items-center rounded 
-                                                p-2 py-1 cursor-pointer
-                                                ${selectedUserId === user?._id ? 'bg-sky-500' : ''
+                                        className={`flex gap-3 mt-1
+                                                items-center border border-black rounded hover:bg-purple-200
+                                                p-2 py-1 cursor-pointer 
+                                                ${selectedUserId === user?._id ? 'bg-purple-500' : ''
+                                            }
                                             } `}>
                                         {/*Socket is Online*/}
                                         <div className={`avatar ${isOnline[index] ? 'online' : ''}`}>
                                             <div className="w-12 rounded-full">
-                                                <img src={currentUser?.avatar} alt='user.img' />
+                                                <img className='rounded-full' src={user?.avatar} alt='user.img' />
                                             </div>
                                         </div>
                                         <div className='flex flex-col flex-1'>
@@ -176,13 +184,14 @@ const Sidebar = ({ onSelectUser }) => {
                 </>
             ) : (
                 <>
-                    <div className="min-h-[70%] max-h-[80%] m overflow-y-auto scrollbar ">
-                        <div className='w-auto'>
+                    <div div className="min-h-[70%] max-h-[80%] m overflow-y-auto scrollbar  ">
+                        <div className='w-auto '>
                             {chatUser.length === 0 ? (
                                 <>
-                                    <div className='font-bold items-center flex flex-col text-xl text-yellow-500'>
-                                        <h1>Why are you Alone!!🤔</h1>
-                                        <h1>Search username to chat</h1>
+                                    <div className='w-auto h-auto p-2 font-bold items-center flex flex-col text-xl text-yellow-500 bg-sky-300 rounded-lg'>
+                                        <h1 class="text-center p-1 text-gray-700 font-bold text-xl">Ready to Connect?</h1>
+                                        <h2 class="text-center p-1  text-gray-500 text-sm">Start a conversation to find your perfect match</h2>
+
                                     </div>
                                 </>
                             ) : (
@@ -191,20 +200,20 @@ const Sidebar = ({ onSelectUser }) => {
                                         <div key={user._id}>
                                             <div
                                                 onClick={() => handelUserClick(user)}
-                                                className={`flex gap-3 
-                                                items-center rounded 
-                                                p-2 py-1 cursor-pointer
-                                                ${selectedUserId === user?._id ? 'bg-sky-500' : ''
+                                                className={`flex gap-3 mt-1
+                                                items-center border border-black rounded hover:bg-purple-200
+                                                p-2 py-1 cursor-pointer 
+                                                ${selectedUserId === user?._id ? 'bg-purple-500' : ''
                                                     } `}>
 
 
                                                 <div className={`avatar ${isOnline[index] ? 'online' : ''}`}>
-                                                    <div className="w-12 rounded-full">
-                                                        <img src={user.avatar} alt='user.img' />
+                                                    <div className="rounded-full  w-12 ">
+                                                        <img className='rounded-full' src={user.avatar} alt='user.img' />
                                                     </div>
                                                 </div>
                                                 <div className='flex flex-col flex-1'>
-                                                    <p className='font-bold text-gray-950'>{user.username}</p>
+                                                    <p className='font-bold text-black-800'>{user.username}</p>
                                                 </div>
                                                 <div>
                                                     {newMessageUsers.reciverId === currentUser._id && newMessageUsers.senderId === user._id ?
@@ -223,7 +232,7 @@ const Sidebar = ({ onSelectUser }) => {
 
                 </>
             )}
-        </div>
+        </div >
     )
 }
 
