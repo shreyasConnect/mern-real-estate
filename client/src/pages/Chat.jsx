@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import MessageContainer from '../components/MessageContainer.jsx';
+import { useLocation } from 'react-router-dom';
 
 export default function Chat() {
-
-    const [selectedUser, setSelectedUser] = useState(null);
+    const location = useLocation();
+    const [selectedUser, setSelectedUser] = useState(location.state?.selectedUser || null);
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
 
     const handelUserSelect = (user) => {

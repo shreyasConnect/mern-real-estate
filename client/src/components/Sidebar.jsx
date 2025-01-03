@@ -147,7 +147,7 @@ const Sidebar = ({ onSelectUser }) => {
             <div className='divider px-3'></div>
             {searchUser?.length > 0 ? (
                 <>
-                    <div className="min-h-[70%] max-h-[80%] m overflow-y-auto scrollbar  ">
+                    <div className="min-h-[70%] max-h-[75%] m overflow-y-auto scrollbar  ">
                         <div className='w-auto   '>
                             {searchUser.map((user, index) => (
                                 <div key={user._id}>
@@ -184,13 +184,13 @@ const Sidebar = ({ onSelectUser }) => {
                 </>
             ) : (
                 <>
-                    <div div className="min-h-[70%] max-h-[80%] m overflow-y-auto scrollbar  ">
+                    <div className="min-h-[70%] max-h-[80%] m overflow-y-auto scrollbar   ">
                         <div className='w-auto '>
                             {chatUser.length === 0 ? (
                                 <>
                                     <div className='w-auto h-auto p-2 font-bold items-center flex flex-col text-xl text-yellow-500 bg-sky-300 rounded-lg'>
-                                        <h1 class="text-center p-1 text-gray-700 font-bold text-xl">Ready to Connect?</h1>
-                                        <h2 class="text-center p-1  text-gray-500 text-sm">Start a conversation to find your perfect match</h2>
+                                        <h1 className="text-center p-1 text-gray-700 font-bold text-xl">Ready to Connect?</h1>
+                                        <h2 className="text-center p-1  text-gray-500 text-sm">Start a conversation to find your perfect match</h2>
 
                                     </div>
                                 </>

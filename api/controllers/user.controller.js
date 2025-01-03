@@ -1,6 +1,7 @@
 import Listing from "../models/listing.model.js";
 import User from "../models/user.model.js"
 import bcryptjs from 'bcryptjs'
+import mongoose from 'mongoose';
 
 export const updateUser = async (req, res) => {
 
@@ -92,5 +93,29 @@ export const getNotificationNumber = async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: "Failed to get notification number!" });
+    }
+};
+
+export const getUser = async (req, res) => {
+    try {
+        const userId = req.params.id;
+
+        // Validate ObjectId if using MongoDB
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({ error: 'Invalid user ID' });
+        }
+
+        // Fetch user and exclude the password field
+        const user = await User.findById(userId).select('-password'); // Excludes 'password' field
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        console.log(user); // Log user details for debugging
+        res.status(200).json(user); // Send user details
+    } catch (error) {
+        console.error(error); // Log the error for debugging
+        res.status(500).json({ error: 'Server error' });
     }
 };

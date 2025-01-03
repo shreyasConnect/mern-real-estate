@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import {
@@ -10,6 +10,9 @@ import {
     FaShare,
 } from 'react-icons/fa';
 import CustomCarousel from '../components/Slider';
+import { Context } from '../NewContext';
+import { useNavigate } from 'react-router-dom';
+import userConversation from '../Zustand/useConversation';
 // import Chat from './Chat';
 
 // https://sabe.io/blog/javascript-format-numbers-commas#:~:text=The%20best%20way%20to%20format,format%20the%20number%20with%20commas.
@@ -21,7 +24,14 @@ export default function Listing() {
     const [copied, setCopied] = useState(false);
     const [contact, setContact] = useState(false);
     const params = useParams();
+    const [userDetails, setUserDetails] = useState(null);
     const { currentUser } = useSelector((state) => state.user);
+    const { premiumMember } = useContext(Context);
+    const [newMessageUsers, setNewMessageUsers] = useState('');
+    const [selectedUserId, setSetSelectedUserId] = useState(null);
+    const { messages, setMessage, selectedConversation, setSelectedConversation } = userConversation();
+    const navigate = useNavigate();
+
     const settings = {
         dots: true,
         infinite: true,
@@ -30,7 +40,6 @@ export default function Listing() {
         slidesToScroll: 1,
         arrows: true,
     };
-
 
     useEffect(() => {
         const fetchListing = async () => {
@@ -55,6 +64,29 @@ export default function Listing() {
         fetchListing();
     }, [params.listingId]);
 
+    const handleClick = async () => {
+        try {
+            console.log("object")
+            const res = await fetch(`/api/user/get/${listing.userRef}`);
+            const data = await res.json();
+
+            if (res.status != 200) {
+                setError(true);
+                setLoading(false);
+                return;
+            }
+            setUserDetails(data);
+            setSelectedConversation(data);
+            setSetSelectedUserId(data._id);
+            setNewMessageUsers('')
+            navigate('/chat', { state: { selectedUser: data } });
+
+        } catch (error) {
+            console.log('Error fetching user details:', error);
+        }
+    };
+
+
 
 
     return (
@@ -65,7 +97,7 @@ export default function Listing() {
             )}
             {listing && !loading && !error && (
                 <div className='w-full h-auto'>
-                    <div class="font-sans max-w-full flex justify-center items-center flex-col">
+                    <div className="font-sans max-w-full flex justify-center items-center flex-col">
                         <CustomCarousel>
                             {listing.imageURLs.map((url, index) => (
                                 <img key={index} src={url} alt={`Slide ${index}`} />
@@ -138,10 +170,16 @@ export default function Listing() {
                                 {listing.furnished ? 'Furnished' : 'Unfurnished'}
                             </li>
                         </ul>
-                        {currentUser && listing.userRef !== currentUser._id(
+                        {premiumMember && currentUser && listing.userRef !== currentUser._id && (
                             <button
                                 className='bg-green-700 text-white p-2 rounded-md'
-                                onClick={() => setContact(true)}
+                                onClick={() =>
+                                    handleClick({
+                                        _id: listing.userRef
+                                        // username: listing.userRef.username,
+                                        // avatar: listing.userRef.avatar,
+                                    })
+                                }
                             >
                                 Contact
                             </button>
