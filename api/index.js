@@ -1,5 +1,4 @@
 import express from "express";
-import colors from 'colors';
 import path from "path";
 import dotenv from 'dotenv';
 import authRouter from "./routes/auth.routes.js";
@@ -38,5 +37,5 @@ app.get("*", (req, res) => {
 })
 
 server.listen(process.env.PORT, () => {
-    console.log(`Server running on port ${process.env.PORT} !`.yellow.bold)
+    console.log(`Server running on port ${process.env.PORT} !`)
 });
